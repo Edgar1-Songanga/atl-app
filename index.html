@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ATL App</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATL Smart Premium</title>
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Babel -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  body {
+    background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+  }
+</style>
 </head>
 
-<body class="bg-gray-100">
+<body>
 
 <div id="root"></div>
 
@@ -35,10 +37,11 @@ function App() {
       {/* HEADER */}
       <div className="text-center mb-4">
         <h1 className="text-2xl font-bold text-yellow-600">ATL Smart</h1>
+        <p className="text-xs text-gray-500">Premium Child Care Experience</p>
       </div>
 
       {/* NAV */}
-      <div className="flex justify-between bg-white p-3 rounded-2xl shadow mb-4">
+      <div className="flex justify-between bg-white p-3 rounded-2xl shadow mb-4 text-sm">
         <button onClick={() => setPage("dashboard")}>Home</button>
         <button onClick={() => setPage("child")}>Criança</button>
         <button onClick={() => setPage("payments")}>Pagamentos</button>
@@ -56,26 +59,38 @@ function App() {
 
 function Dashboard({ setPage }) {
   return (
-    <div className="bg-white p-5 rounded-2xl shadow">
-      <h2 className="text-xl font-bold">Olá 👋</h2>
+    <div>
 
-      <div className="bg-green-100 p-3 rounded-xl mt-3">
-        🟢 João está no ATL
+      {/* HERO */}
+      <div className="rounded-2xl overflow-hidden shadow mb-4">
+        <img 
+          src="https://images.unsplash.com/photo-1588072432836-e10032774350"
+          className="h-40 w-full object-cover"
+        />
       </div>
 
-      <div className="mt-3">
-        <h3 className="font-semibold">Atividades</h3>
-        <ul className="text-gray-600 text-sm">
-          <li>📚 Estudo</li>
-          <li>🎨 Desenho</li>
-        </ul>
-      </div>
+      <div className="bg-white p-5 rounded-2xl shadow">
+        <h2 className="text-xl font-bold">Olá, Edgar 👋</h2>
 
-      <button 
-        onClick={() => setPage("payments")}
-        className="bg-yellow-500 text-white w-full py-2 rounded-xl mt-4">
-        Pagar Mensalidade
-      </button>
+        <div className="bg-green-100 p-3 rounded-xl mt-3">
+          🟢 João está no ATL
+        </div>
+
+        <div className="mt-3">
+          <h3 className="font-semibold">Atividades de hoje</h3>
+          <ul className="text-gray-600 text-sm">
+            <li>📚 Estudo</li>
+            <li>🎨 Pintura</li>
+            <li>⚽ Recreação</li>
+          </ul>
+        </div>
+
+        <button 
+          onClick={() => setPage("payments")}
+          className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white w-full py-2 rounded-xl mt-4 shadow">
+          Pagar Mensalidade
+        </button>
+      </div>
     </div>
   );
 }
@@ -83,21 +98,47 @@ function Dashboard({ setPage }) {
 function Child() {
   return (
     <div className="bg-white p-5 rounded-2xl shadow">
-      <h2 className="text-xl font-bold">João Silva</h2>
-      <p className="text-gray-500">8 anos</p>
 
-      <div className="bg-red-100 p-2 mt-3 rounded">
+      {/* FOTO CRIANÇA */}
+      <div className="flex items-center gap-4">
+        <img 
+          src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9"
+          className="w-16 h-16 rounded-full object-cover"
+        />
+        <div>
+          <h2 className="text-lg font-bold">João Silva</h2>
+          <p className="text-gray-500 text-sm">8 anos</p>
+        </div>
+      </div>
+
+      {/* ALERTA */}
+      <div className="bg-red-100 p-2 mt-4 rounded text-sm">
         ⚠️ Alergia: Amendoim
       </div>
 
+      {/* PAIS */}
       <div className="mt-4">
-        <h3 className="font-semibold">Fotos</h3>
+        <h3 className="font-semibold">👨‍👩‍👦 Encarregados</h3>
+        <p className="text-sm text-gray-600">Edgar Songanga</p>
+        <p className="text-sm text-gray-600">+244 921 713 644</p>
+      </div>
+
+      {/* ATL */}
+      <div className="mt-4">
+        <h3 className="font-semibold">🏫 ATL</h3>
+        <p className="text-sm text-gray-600">ATL Smart Luanda</p>
+      </div>
+
+      {/* GALERIA */}
+      <div className="mt-4">
+        <h3 className="font-semibold">📸 Atividades</h3>
         <div className="grid grid-cols-3 gap-2 mt-2">
-          <div className="bg-gray-200 h-20 rounded"></div>
-          <div className="bg-gray-200 h-20 rounded"></div>
-          <div className="bg-gray-200 h-20 rounded"></div>
+          <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" className="h-20 w-full object-cover rounded"/>
+          <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9" className="h-20 w-full object-cover rounded"/>
+          <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178" className="h-20 w-full object-cover rounded"/>
         </div>
       </div>
+
     </div>
   );
 }
@@ -105,6 +146,7 @@ function Child() {
 function Payments({ paid, setPaid }) {
   return (
     <div className="bg-white p-5 rounded-2xl shadow text-center">
+
       {!paid ? (
         <>
           <h2 className="text-xl font-bold">Mensalidade</h2>
@@ -112,17 +154,18 @@ function Payments({ paid, setPaid }) {
 
           <button 
             onClick={() => setPaid(true)}
-            className="bg-green-500 text-white w-full py-2 mt-4 rounded-xl">
+            className="bg-green-500 text-white w-full py-2 mt-4 rounded-xl shadow">
             Pagar 80.000 Kz
           </button>
         </>
       ) : (
         <div>
-          <h2 className="text-green-600 text-xl font-bold">Pagamento OK</h2>
+          <h2 className="text-green-600 text-xl font-bold">Pagamento Confirmado</h2>
           <p className="mt-2">✔️ ATL: 72.000 Kz</p>
           <p>✔️ Plataforma: 8.000 Kz</p>
         </div>
       )}
+
     </div>
   );
 }
@@ -130,21 +173,23 @@ function Payments({ paid, setPaid }) {
 function CheckIn({ checked, setChecked }) {
   return (
     <div className="bg-white p-5 rounded-2xl shadow text-center">
+
       {!checked ? (
         <>
           <h2 className="text-xl font-bold">Check-in</h2>
 
           <button 
             onClick={() => setChecked(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-xl mt-4">
+            className="bg-blue-500 text-white px-4 py-2 rounded-xl mt-4 shadow">
             Simular Check-in
           </button>
         </>
       ) : (
         <h2 className="text-green-600 font-bold">
-          ✅ Check-in realizado
+          ✅ Check-in realizado com sucesso
         </h2>
       )}
+
     </div>
   );
 }
@@ -154,4 +199,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 
 </body>
-  </html>
+</html>
