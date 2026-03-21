@@ -1,75 +1,63 @@
 <script>
-import { onMount } from "svelte";
-import ApexCharts from "apexcharts";
+  import { onMount } from "svelte";
 
-// Background dinâmico
-let images = [
-  "https://images.unsplash.com/photo-1588072432836-e10032774350",
-  "https://images.unsplash.com/photo-1509062522246-3755977927d7",
-  "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70",
-  "https://images.unsplash.com/photo-1607746882042-944635dfe10e"
-];
-let bgIndex = 0;
+  // Background images
+  let images = [
+    "https://images.unsplash.com/photo-1588072432836-e10032774350",
+    "https://images.unsplash.com/photo-1509062522246-3755977927d7",
+    "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70"
+  ];
+  let bgIndex = 0;
 
-// Página atual
-let page = "home";
+  let page = "home";
 
-// Simulação de 500 crianças
-let children = Array.from({ length: 500 }, (_, i) => ({
-  id: i,
-  name: `Criança ${i + 1}`,
-  age: Math.floor(Math.random() * 10) + 5,
-  checkin: Math.random() > 0.2
-}));
+  // Simulate 200 children
+  let children = Array.from({ length: 200 }, (_, i) => ({
+    id: i,
+    name: `Criança ${i + 1}`,
+    age: Math.floor(Math.random() * 10) + 5
+  }));
 
-// Formulários
-let newName = "";
-let newAge = "";
-let contactMsg = "";
-let complaintMsg = "";
+  let newName = "";
+  let newAge = "";
+  let contactMsg = "";
+  let complaintMsg = "";
 
-// Equipa
-let team = [
-  { name: "Edgar Songanga", role: "CEO", contact: "+244 921 713 644" },
-  { name: "Ana Mendes", role: "Coordenadora", contact: "+244 923 112 445" },
-  { name: "Carlos Silva", role: "Professor", contact: "+244 922 334 556" }
-];
+  // Team
+  let team = [
+    { name: "Edgar Songanga", role: "CEO", contact: "+244 921 713 644" },
+    { name: "Ana Mendes", role: "Coordenadora", contact: "+244 923 112 445" }
+  ];
 
-// Dashboard stats
-$: totalCheckin = children.filter(c => c.checkin).length;
-$: totalPending = children.length - totalCheckin;
-$: totalRevenue = children.length * 80000;
+  onMount(() => {
+    const interval = setInterval(() => {
+      bgIndex = (bgIndex + 1) % images.length;
+    }, 4000);
+    return () => clearInterval(interval);
+  });
 
-// Background carousel
-onMount(() => {
-  const interval = setInterval(() => {
-    bgIndex = (bgIndex + 1) % images.length;
-  }, 4000);
-  return () => clearInterval(interval);
-});
+  function registerChild() {
+    if (!newName || !newAge) return alert("Preencha todos os campos");
+    children = [...children, { id: Date.now(), name: newName, age: newAge }];
+    alert("Criança registrada!");
+    newName = ""; newAge = "";
+  }
 
-function registerChild() {
-  if (!newName || !newAge) return alert("Preencha todos os campos");
-  children = [...children, { id: Date.now(), name: newName, age: newAge, checkin: false }];
-  alert("Criança registrada!");
-  newName = ""; newAge = "";
-}
+  function sendContact() {
+    if (!contactMsg) return alert("Escreva uma mensagem");
+    alert("Mensagem enviada!");
+    contactMsg = "";
+  }
 
-function sendContact() {
-  if (!contactMsg) return alert("Escreva uma mensagem");
-  alert("Mensagem enviada!");
-  contactMsg = "";
-}
-
-function sendComplaint() {
-  if (!complaintMsg) return alert("Reclamação enviada!");
-  alert("Reclamação enviada!");
-  complaintMsg = "";
-}
+  function sendComplaint() {
+    if (!complaintMsg) return alert("Reclamação enviada!");
+    alert("Reclamação enviada!");
+    complaintMsg = "";
+  }
 </script>
 
 <style>
-body { margin:0; font-family:system-ui,sans-serif; }
+  body { margin:0; font-family:sans-serif; }
 </style>
 
 <div class="min-h-screen text-white relative">
@@ -77,66 +65,77 @@ body { margin:0; font-family:system-ui,sans-serif; }
   <div class="fixed inset-0 bg-cover bg-center transition-all duration-1000"
        style="background-image: url({images[bgIndex]});"></div>
 
-  <div class="relative z-10 p-4 backdrop-blur-md bg-black/60 min-h-screen">
+  <div class="relative z-10 p-4 backdrop-blur-md bg-black/40 min-h-screen">
 
     <!-- Header -->
-    <div class="flex justify-between mb-6 items-center">
-      <h1 class="text-2xl font-bold text-yellow-400 tracking-wide">ATL Smart Ultra</h1>
-      <button on:click={() => page="register"} class="text-sm bg-yellow-400/20 p-1 rounded hover:bg-yellow-400/40 transition">+ Inscrever</button>
+    <div class="flex justify-between mb-6">
+      <h1 class="text-xl font-bold text-yellow-400">ATL Smart</h1>
+      <button on:click={() => page="register"} class="text-sm bg-yellow-400/20 p-1 rounded">+ Inscrever</button>
     </div>
 
     <!-- Menu -->
     <div class="flex gap-3 mb-4 flex-wrap">
-      <button on:click={() => page="home"} class="hover:text-yellow-400 transition">Home</button>
-      <button on:click={() => page="children"} class="hover:text-yellow-400 transition">Crianças</button>
-      <button on:click={() => page="team"} class="hover:text-yellow-400 transition">Equipa</button>
-      <button on:click={() => page="contact"} class="hover:text-yellow-400 transition">Contacte-nos</button>
-      <button on:click={() => page="complaint"} class="hover:text-yellow-400 transition">Reclamações</button>
+      <button on:click={() => page="home"}>Home</button>
+      <button on:click={() => page="children"}>Crianças</button>
+      <button on:click={() => page="team"}>Equipa</button>
+      <button on:click={() => page="contact"}>Contacte-nos</button>
+      <button on:click={() => page="complaint"}>Reclamações</button>
     </div>
 
-    <!-- Pages -->
+    <!-- Páginas -->
     {#if page==="home"}
-      <div class="bg-white/10 p-5 rounded-3xl shadow-xl backdrop-blur-md">
-        <h2 class="text-2xl font-bold mb-4">Dashboard ATL</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-          <Stat title="Crianças" value={children.length}/>
-          <Stat title="Presentes" value={totalCheckin}/>
-          <Stat title="Pendentes" value={totalPending}/>
-          <Stat title="Receita (Kz)" value={totalRevenue.toLocaleString()}/>
-          <Stat title="Staff" value={team.length}/>
+      <div class="bg-white/10 p-5 rounded-2xl">
+        <h2 class="text-lg font-bold">Dashboard ATL</h2>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <div class="bg-black/30 p-3 rounded-xl text-center">
+            <p class="text-sm">Crianças</p>
+            <p class="text-xl font-bold">{children.length}</p>
+          </div>
+          <div class="bg-black/30 p-3 rounded-xl text-center">
+            <p class="text-sm">Presentes</p>
+            <p class="text-xl font-bold">{Math.floor(children.length*0.8)}</p>
+          </div>
+          <div class="bg-black/30 p-3 rounded-xl text-center">
+            <p class="text-sm">Receita</p>
+            <p class="text-xl font-bold">16.000.000 Kz</p>
+          </div>
+          <div class="bg-black/30 p-3 rounded-xl text-center">
+            <p class="text-sm">Staff</p>
+            <p class="text-xl font-bold">12</p>
+          </div>
         </div>
+
         <div class="mt-4">
-          <h3 class="font-semibold text-lg">Atividades Hoje</h3>
-          <p class="text-sm">Estudo • Desenho • Música • Esportes • Jogos</p>
+          <h3 class="font-semibold">Atividades hoje</h3>
+          <p class="text-sm">Estudo • Desenho • Jogos</p>
         </div>
       </div>
     {/if}
 
     {#if page==="children"}
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {#each children.slice(0,100) as c}
-          <div class="bg-white/10 p-3 rounded-xl flex flex-col justify-between hover:scale-105 transition transform">
-            <span class="font-semibold">{c.name}</span>
+      <div class="space-y-2">
+        {#each children.slice(0,50) as c}
+          <div class="bg-white/10 p-3 rounded-xl flex justify-between">
+            <span>{c.name}</span>
             <span>{c.age} anos</span>
-            <span class="{c.checkin ? 'text-green-400' : 'text-red-400'}">{c.checkin ? 'Presente' : 'Pendente'}</span>
           </div>
         {/each}
       </div>
     {/if}
 
     {#if page==="register"}
-      <div class="bg-white/10 p-5 rounded-3xl shadow-xl">
-        <h2 class="text-xl font-bold mb-3">Inscrever Criança</h2>
-        <input placeholder="Nome" class="w-full p-3 mt-2 rounded text-black" bind:value={newName}/>
-        <input placeholder="Idade" type="number" class="w-full p-3 mt-2 rounded text-black" bind:value={newAge}/>
-        <button on:click={registerChild} class="bg-yellow-500 w-full py-3 mt-4 rounded hover:bg-yellow-600 transition">Registrar</button>
+      <div class="bg-white/10 p-5 rounded-2xl">
+        <h2 class="text-lg font-bold">Inscrever Criança</h2>
+        <input placeholder="Nome" class="w-full p-2 mt-3 rounded text-black" bind:value={newName}/>
+        <input placeholder="Idade" class="w-full p-2 mt-3 rounded text-black" bind:value={newAge}/>
+        <button on:click={registerChild} class="bg-yellow-500 w-full py-2 mt-4 rounded">Registrar</button>
       </div>
     {/if}
 
     {#if page==="team"}
-      <div class="space-y-3">
+      <div class="space-y-2">
         {#each team as t}
-          <div class="bg-white/10 p-3 rounded-2xl shadow hover:shadow-lg transition">
+          <div class="bg-white/10 p-3 rounded-xl">
             <p class="font-semibold">{t.name}</p>
             <p>{t.role}</p>
             <p class="text-sm">{t.contact}</p>
@@ -146,30 +145,20 @@ body { margin:0; font-family:system-ui,sans-serif; }
     {/if}
 
     {#if page==="contact"}
-      <div class="bg-white/10 p-5 rounded-3xl shadow-xl">
-        <h2 class="font-bold text-lg mb-2">Contacte-nos</h2>
-        <textarea placeholder="Mensagem" class="w-full p-3 mt-2 rounded text-black" rows="4" bind:value={contactMsg}></textarea>
-        <button on:click={sendContact} class="bg-yellow-500 w-full py-3 mt-4 rounded hover:bg-yellow-600 transition">Enviar</button>
+      <div class="bg-white/10 p-5 rounded-2xl">
+        <h2 class="font-bold text-lg">Contacte-nos</h2>
+        <textarea placeholder="Mensagem" class="w-full p-2 mt-3 rounded text-black" rows="4" bind:value={contactMsg}></textarea>
+        <button on:click={sendContact} class="bg-yellow-500 w-full py-2 mt-4 rounded">Enviar</button>
       </div>
     {/if}
 
     {#if page==="complaint"}
-      <div class="bg-white/10 p-5 rounded-3xl shadow-xl">
-        <h2 class="font-bold text-lg mb-2">Reclamações</h2>
-        <textarea placeholder="Escreva aqui..." class="w-full p-3 mt-2 rounded text-black" rows="4" bind:value={complaintMsg}></textarea>
-        <button on:click={sendComplaint} class="bg-red-500 w-full py-3 mt-4 rounded hover:bg-red-600 transition">Enviar</button>
+      <div class="bg-white/10 p-5 rounded-2xl">
+        <h2 class="font-bold text-lg">Reclamações</h2>
+        <textarea placeholder="Escreva aqui..." class="w-full p-2 mt-3 rounded text-black" rows="4" bind:value={complaintMsg}></textarea>
+        <button on:click={sendComplaint} class="bg-red-500 w-full py-2 mt-4 rounded">Enviar Reclamação</button>
       </div>
     {/if}
 
   </div>
-</div>
-
-<!-- Stat Component -->
-<script context="module">
-  export let title;
-  export let value;
-</script>
-<div class="bg-black/30 p-3 rounded-2xl text-center m-1 hover:scale-105 transition transform">
-  <p class="text-sm">{title}</p>
-  <p class="text-xl font-bold">{value}</p>
 </div>
