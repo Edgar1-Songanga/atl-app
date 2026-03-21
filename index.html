@@ -3,175 +3,199 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ATL Smart Elite</title>
+<title>ATL Smart Pro Full</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
 <style>
-  body {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: white;
-  }
+body { margin:0; }
 </style>
 </head>
 
 <body>
-
 <div id="root"></div>
 
 <script type="text/babel">
 
-const { useState } = React;
+const { useState, useEffect } = React;
+
+// Background carousel
+const images = [
+  "https://images.unsplash.com/photo-1588072432836-e10032774350",
+  "https://images.unsplash.com/photo-1509062522246-3755977927d7",
+  "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70"
+];
+
+// Sample team
+const team = [
+  {name:"Edgar Songanga", role:"CEO", contact:"+244 921 713 644"},
+  {name:"Ana Mendes", role:"Coordenadora", contact:"+244 923 112 445"}
+];
 
 function App() {
-  const [page, setPage] = useState("dashboard");
-  const [paid, setPaid] = useState(false);
+  const [page, setPage] = useState("home");
+  const [children, setChildren] = useState(generateChildren());
+  const [bgIndex, setBgIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgIndex(i => (i + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="max-w-md mx-auto min-h-screen p-4">
+    <div className="min-h-screen text-white">
 
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-bold text-yellow-400">ATL Smart</h1>
-        <div className="text-sm text-gray-300">Premium</div>
-      </div>
+      <div className="fixed inset-0 bg-cover bg-center transition-all duration-1000"
+        style={{ backgroundImage: `url(${images[bgIndex]})` }}
+      />
 
-      {/* NAV */}
-      <div className="flex justify-between bg-white/10 backdrop-blur-lg p-3 rounded-2xl mb-6 text-sm">
-        <NavBtn label="Home" onClick={() => setPage("dashboard")} />
-        <NavBtn label="Criança" onClick={() => setPage("child")} />
-        <NavBtn label="Pagamentos" onClick={() => setPage("payments")} />
-      </div>
+      <div className="relative z-10 p-4 backdrop-blur-md bg-black/40 min-h-screen">
 
-      {page === "dashboard" && <Dashboard setPage={setPage} />}
-      {page === "child" && <Child />}
-      {page === "payments" && <Payments paid={paid} setPaid={setPaid} />}
-
-    </div>
-  );
-}
-
-function NavBtn({ label, onClick }) {
-  return (
-    <button onClick={onClick} className="text-gray-200 hover:text-yellow-400">
-      {label}
-    </button>
-  );
-}
-
-function Card({ children }) {
-  return (
-    <div className="bg-white/10 backdrop-blur-xl p-5 rounded-2xl shadow-lg mb-4">
-      {children}
-    </div>
-  );
-}
-
-function Dashboard({ setPage }) {
-  return (
-    <div>
-
-      {/* HERO */}
-      <div className="relative rounded-2xl overflow-hidden mb-4">
-        <img 
-          src="https://images.unsplash.com/photo-1588072432836-e10032774350"
-          className="h-44 w-full object-cover opacity-70"
-        />
-        <div className="absolute bottom-3 left-3">
-          <h2 className="text-lg font-bold">João está no ATL</h2>
+        {/* HEADER */}
+        <div className="flex justify-between mb-6">
+          <h1 className="text-xl font-bold text-yellow-400">ATL Smart</h1>
+          <button onClick={() => setPage("register")} className="text-sm bg-yellow-400/20 p-1 rounded">+ Inscrever</button>
         </div>
+
+        {/* MENU */}
+        <div className="flex gap-3 mb-4 flex-wrap">
+          <button onClick={() => setPage("home")}>Home</button>
+          <button onClick={() => setPage("children")}>Crianças</button>
+          <button onClick={() => setPage("team")}>Equipa</button>
+          <button onClick={() => setPage("contact")}>Contacte-nos</button>
+          <button onClick={() => setPage("complaint")}>Reclamações</button>
+        </div>
+
+        {/* PAGES */}
+        {page==="home" && <Home children={children} />}
+        {page==="children" && <ChildrenList children={children} />}
+        {page==="register" && <Register setChildren={setChildren} />}
+        {page==="team" && <Team />}
+        {page==="contact" && <Contact />}
+        {page==="complaint" && <Complaint />}
+
       </div>
-
-      <Card>
-        <h2 className="font-semibold">Atividades</h2>
-        <ul className="text-sm text-gray-300 mt-2">
-          <li>📚 Estudo</li>
-          <li>🎨 Pintura</li>
-          <li>⚽ Jogos</li>
-        </ul>
-
-        <button 
-          onClick={() => setPage("payments")}
-          className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black w-full py-2 rounded-xl mt-4 font-bold">
-          Pagar Mensalidade
-        </button>
-      </Card>
-
     </div>
   );
 }
 
-function Child() {
+// Generate 100 children
+function generateChildren() {
+  return Array.from({length:100}, (_,i)=>({
+    id:i, name:"Criança "+(i+1), age: Math.floor(Math.random()*10)+5
+  }));
+}
+
+// Home / Dashboard
+function Home({children}) {
   return (
-    <Card>
-
-      <div className="flex items-center gap-4">
-        <img 
-          src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9"
-          className="w-16 h-16 rounded-full object-cover border-2 border-yellow-400"
-        />
-        <div>
-          <h2 className="font-bold">João Silva</h2>
-          <p className="text-sm text-gray-400">8 anos</p>
-        </div>
+    <div className="bg-white/10 p-5 rounded-2xl">
+      <h2 className="text-lg font-bold">Dashboard ATL</h2>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <Stat title="Crianças" value={children.length}/>
+        <Stat title="Presentes" value={Math.floor(children.length*0.8)}/>
+        <Stat title="Receita" value="8.000.000 Kz"/>
+        <Stat title="Staff" value="12"/>
       </div>
-
-      <div className="bg-red-500/20 p-2 mt-4 rounded text-sm">
-        ⚠️ Alergia: Amendoim
-      </div>
-
-      <div className="mt-4 text-sm">
-        <p>👨‍👩‍👦 Edgar Songanga</p>
-        <p className="text-gray-400">+244 921 713 644</p>
-      </div>
-
       <div className="mt-4">
-        <h3 className="text-sm font-semibold">Galeria</h3>
-        <div className="grid grid-cols-3 gap-2 mt-2">
-          <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" className="rounded h-20 object-cover"/>
-          <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178" className="rounded h-20 object-cover"/>
-          <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9" className="rounded h-20 object-cover"/>
-        </div>
+        <h3 className="font-semibold">Atividades hoje</h3>
+        <p className="text-sm">Estudo • Desenho • Jogos</p>
       </div>
-
-    </Card>
+    </div>
   );
 }
 
-function Payments({ paid, setPaid }) {
+function Stat({title,value}) {
   return (
-    <Card>
+    <div className="bg-black/30 p-3 rounded-xl text-center">
+      <p className="text-sm">{title}</p>
+      <p className="text-xl font-bold">{value}</p>
+    </div>
+  );
+}
 
-      {!paid ? (
-        <>
-          <h2 className="text-lg font-bold">Pagamento</h2>
-          <p className="text-red-400 mt-2">Pendente</p>
+// Children list
+function ChildrenList({children}) {
+  return (
+    <div className="space-y-2">
+      {children.slice(0,20).map(c=>(
+        <div key={c.id} className="bg-white/10 p-3 rounded-xl flex justify-between">
+          <span>{c.name}</span>
+          <span>{c.age} anos</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-          <button 
-            onClick={() => setPaid(true)}
-            className="bg-green-500 w-full py-2 mt-4 rounded-xl font-bold">
-            Pagar 80.000 Kz
-          </button>
-        </>
-      ) : (
-        <>
-          <h2 className="text-green-400 font-bold">Pagamento Confirmado</h2>
-          <p className="text-sm mt-2">ATL: 72.000 Kz</p>
-          <p className="text-sm">Plataforma: 8.000 Kz</p>
-        </>
-      )}
+// Registration form
+function Register({setChildren}) {
+  const [name,setName] = useState("");
+  const [age,setAge] = useState("");
 
-    </Card>
+  const submit=()=>{
+    if(!name||!age)return alert("Preencha tudo");
+    setChildren(prev=>[...prev,{id:Date.now(),name,age}]);
+    alert("Criança registada!");
+  };
+
+  return (
+    <div className="bg-white/10 p-5 rounded-2xl">
+      <h2 className="text-lg font-bold">Inscrever Criança</h2>
+      <input placeholder="Nome" className="w-full p-2 mt-3 rounded text-black" onChange={e=>setName(e.target.value)}/>
+      <input placeholder="Idade" className="w-full p-2 mt-3 rounded text-black" onChange={e=>setAge(e.target.value)}/>
+      <button onClick={submit} className="bg-yellow-500 w-full py-2 mt-4 rounded">Registrar</button>
+    </div>
+  );
+}
+
+// Team page
+function Team() {
+  return (
+    <div className="space-y-2">
+      {team.map((t,i)=>(
+        <div key={i} className="bg-white/10 p-3 rounded-xl">
+          <p className="font-semibold">{t.name}</p>
+          <p>{t.role}</p>
+          <p className="text-sm">{t.contact}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Contact form
+function Contact() {
+  const [msg,setMsg] = useState("");
+  const submit=()=>{ if(!msg) return alert("Escreva algo"); alert("Mensagem enviada!"); setMsg(""); };
+  return (
+    <div className="bg-white/10 p-5 rounded-2xl">
+      <h2 className="font-bold text-lg">Contacte-nos</h2>
+      <textarea placeholder="Mensagem" className="w-full p-2 mt-3 rounded text-black" rows="4" value={msg} onChange={e=>setMsg(e.target.value)}/>
+      <button onClick={submit} className="bg-yellow-500 w-full py-2 mt-4 rounded">Enviar</button>
+    </div>
+  );
+}
+
+// Complaint form
+function Complaint() {
+  const [text,setText] = useState("");
+  const submit=()=>{ if(!text) return alert("Escreva sua reclamação"); alert("Reclamação enviada!"); setText(""); };
+  return (
+    <div className="bg-white/10 p-5 rounded-2xl">
+      <h2 className="font-bold text-lg">Reclamações</h2>
+      <textarea placeholder="Escreva aqui..." className="w-full p-2 mt-3 rounded text-black" rows="4" value={text} onChange={e=>setText(e.target.value)}/>
+      <button onClick={submit} className="bg-red-500 w-full py-2 mt-4 rounded">Enviar Reclamação</button>
+    </div>
   );
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-
 </script>
-
 </body>
 </html>
