@@ -3,184 +3,157 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
 <title>ATL Smart Pro</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
 <style>
-body {
-  margin:0;
-}
+body{margin:0}
+.glass{background:rgba(255,255,255,.06);backdrop-filter:blur(10px)}
 </style>
 </head>
-
 <body>
-
 <div id="root"></div>
-
 <script type="text/babel">
-
 const { useState, useEffect } = React;
 
-// IMAGENS DINÂMICAS
 const images = [
-  "https://images.unsplash.com/photo-1588072432836-e10032774350",
-  "https://images.unsplash.com/photo-1509062522246-3755977927d7",
-  "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70"
+  "https://images.unsplash.com/photo-1496483353456-9094fc0b559a",
+  "https://images.unsplash.com/photo-1520975922284-3f2bb37262f9",
+  "https://images.unsplash.com/photo-1503676260728-1c00da094a0b",
+  "https://images.unsplash.com/photo-1472289065668-ce198be0c114"
 ];
 
-function App() {
-  const [page, setPage] = useState("home");
-  const [children, setChildren] = useState(generateChildren());
-  const [bgIndex, setBgIndex] = useState(0);
-
-  useEffect(() => {
-    setInterval(() => {
-      setBgIndex(i => (i + 1) % images.length);
-    }, 4000);
-  }, []);
-
-  return (
-    <div className="min-h-screen text-white">
-
-      {/* BACKGROUND DINÂMICO */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center transition-all duration-1000"
-        style={{ backgroundImage: `url(${images[bgIndex]})` }}
-      />
-
-      <div className="relative z-10 p-4 backdrop-blur-md bg-black/40 min-h-screen">
-
-        {/* HEADER */}
-        <div className="flex justify-between mb-4">
-          <h1 className="text-xl font-bold text-yellow-400">ATL Smart</h1>
-          <button onClick={() => setPage("register")}>+ Inscrever</button>
-        </div>
-
-        {/* MENU */}
-        <div className="flex gap-3 mb-4">
-          <button onClick={() => setPage("home")}>Home</button>
-          <button onClick={() => setPage("children")}>Crianças</button>
-        </div>
-
-        {page === "home" && <Home children={children} />}
-        {page === "children" && <ChildrenList children={children} />}
-        {page === "register" && <Register setChildren={setChildren} />}
-
-      </div>
-    </div>
-  );
-}
-
-// GERAR 100 CRIANÇAS
-function generateChildren() {
-  return Array.from({ length: 100 }, (_, i) => ({
-    id: i,
-    name: "Criança " + (i + 1),
-    age: Math.floor(Math.random() * 10) + 5
+function generateChildren(){
+  return Array.from({length:200},(_,i)=>({
+    id:i+1,
+    name:"Criança "+(i+1),
+    age:Math.floor(Math.random()*10)+5,
+    photo:"https://i.pravatar.cc/100?img="+((i%70)+1)
   }));
 }
 
-// HOME DINÂMICO
-function Home({ children }) {
-  return (
-    <div className="bg-white/10 p-5 rounded-2xl">
+function App(){
+  const [page,setPage]=useState("home");
+  const [children,setChildren]=useState(()=>generateChildren());
+  const [bg,setBg]=useState(0);
 
-      <h2 className="text-lg font-bold">Dashboard ATL</h2>
+  useEffect(()=>{
+    const id=setInterval(()=>setBg(b=>(b+1)%images.length),5000);
+    return()=>clearInterval(id);
+  },[]);
 
-      <div className="mt-4 grid grid-cols-2 gap-3">
+  return(
+    <div className="min-h-screen text-white font-light">
+      <div className="fixed inset-0 bg-center bg-cover transition-opacity duration-1000" style={{backgroundImage:`url(${images[bg]})`}}/>
+      <div className="fixed inset-0 bg-black/55"/>
+      <div className="relative z-10">
+        <header className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+          <h1 className="text-2xl tracking-widest font-semibold text-yellow-300">ATL Smart</h1>
+          <nav className="hidden md:flex gap-6 text-sm opacity-90">
+            <button onClick={()=>setPage("home")}>Home</button>
+            <button onClick={()=>setPage("children")}>Crianças</button>
+            <button onClick={()=>setPage("about")}>Sobre o ATL</button>
+            <button onClick={()=>setPage("us")}>Sobre nós</button>
+            <button onClick={()=>setPage("contact")}>Contacte-nos</button>
+          </nav>
+        </header>
 
-        <Stat title="Crianças" value={children.length} />
-        <Stat title="Presentes" value={Math.floor(children.length * 0.8)} />
-        <Stat title="Receita" value="8.000.000 Kz" />
-        <Stat title="Staff" value="12" />
-
+        <main className="max-w-6xl mx-auto px-6 pb-20">
+          {page==="home" && <Home children={children}/>}
+          {page==="children" && <ChildrenList children={children}/>}
+          {page==="about" && <About/>}
+          {page==="us" && <Us/>}
+          {page==="contact" && <Contact/>}
+        </main>
       </div>
+    </div>
+  );
+}
 
-      <div className="mt-4">
-        <h3 className="font-semibold">Atividades hoje</h3>
-        <p className="text-sm">Estudo • Desenho • Jogos</p>
+function Home({children}){
+  return(
+    <div className="space-y-10">
+      <section className="glass rounded-3xl p-10">
+        <p className="uppercase text-xs tracking-widest opacity-70">Bem-vindo ao</p>
+        <h2 className="text-4xl md:text-5xl font-semibold mt-2">ATL Smart: onde crianças crescem felizes</h2>
+        <p className="mt-4 opacity-80 max-w-xl">Programa de tempos livres com foco em estudo, arte e jogos. Segurança, carinho e resultados.</p>
+        <button onClick={()=>alert("Inscrições abertas!")} className="mt-6 px-5 py-3 bg-yellow-400 text-black rounded-xl">Inscrever agora</button>
+      </section>
+
+      <section className="grid md:grid-cols-4 gap-4">
+        {[
+          ["Crianças",children.length],
+          ["Presentes",Math.floor(children.length*0.82)],
+          ["Staff",24],
+          ["Avaliação", "4.9"]
+        ].map(([t,v])=>(
+          <div className="glass rounded-2xl p-6 text-center" key={t}>
+            <p className="text-sm opacity-70">{t}</p>
+            <p className="text-3xl font-semibold mt-1">{v}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="glass rounded-3xl p-8">
+        <h3 className="text-xl font-semibold">Atividades de hoje</h3>
+        <p className="opacity-80 mt-2">Estudo orientado • Desenho e pintura • Jogos cooperativos • Música</p>
+      </section>
+
+      <section className="glass rounded-3xl p-8">
+        <h3 className="text-xl font-semibold mb-3">O que dizem os pais</h3>
+        <p className="opacity-80 italic">“Meu filho adora ir ao ATL. Vejo evolução na leitura e na socialização.” — Mãe da Miriam</p>
+      </section>
+    </div>
+  );
+}
+
+function ChildrenList({children}){
+  return(
+    <div>
+      <h2 className="text-2xl font-semibold mb-4">Perfis de crianças</h2>
+      <div className="grid md:grid-cols-3 gap-4">
+        {children.slice(0,24).map(c=>(
+          <div key={c.id} className="glass rounded-2xl p-4 flex items-center gap-4">
+            <img src={c.photo} alt="" className="w-14 h-14 rounded-full"/>
+            <div>
+              <p className="font-medium">{c.name}</p>
+              <p className="text-sm opacity-70">{c.age} anos</p>
+            </div>
+          </div>
+        ))}
       </div>
-
     </div>
   );
 }
 
-function Stat({ title, value }) {
-  return (
-    <div className="bg-black/30 p-3 rounded-xl text-center">
-      <p className="text-sm">{title}</p>
-      <p className="text-xl font-bold">{value}</p>
+function About(){
+  return(
+    <div className="glass rounded-3xl p-8 space-y-3">
+      <h2 className="text-2xl font-semibold">Sobre o ATL</h2>
+      <p className="opacity-80">Atividades de Tempos Livres para crianças dos 5 aos 14 anos. Apoio escolar, artes, desporto e vida em grupo. Protocolos de segurança e equipa certificada.</p>
+    </div>
+  );
+}
+function Us(){
+  return(
+    <div className="glass rounded-3xl p-8 space-y-3">
+      <h2 className="text-2xl font-semibold">Sobre nós</h2>
+      <p className="opacity-80">Equipa multidisciplinar com educadores, psicólogos e artistas. Parcerias locais e melhoria contínua.</p>
+    </div>
+  );
+}
+function Contact(){
+  return(
+    <div className="glass rounded-3xl p-8 space-y-3">
+      <h2 className="text-2xl font-semibold">Contacte-nos</h2>
+      <p className="opacity-80">Luanda • +244 900 000 000 • atlsmart@email.com</p>
     </div>
   );
 }
 
-// LISTA DE CRIANÇAS
-function ChildrenList({ children }) {
-  return (
-    <div className="space-y-2">
-
-      {children.slice(0, 20).map(c => (
-        <div key={c.id} className="bg-white/10 p-3 rounded-xl flex justify-between">
-          <span>{c.name}</span>
-          <span>{c.age} anos</span>
-        </div>
-      ))}
-
-    </div>
-  );
-}
-
-// FORMULÁRIO REAL
-function Register({ setChildren }) {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-
-  const submit = () => {
-    if (!name || !age) return alert("Preencha tudo");
-
-    setChildren(prev => [
-      ...prev,
-      { id: Date.now(), name, age }
-    ]);
-
-    alert("Criança registada!");
-  };
-
-  return (
-    <div className="bg-white/10 p-5 rounded-2xl">
-
-      <h2 className="text-lg font-bold">Inscrever Criança</h2>
-
-      <input 
-        placeholder="Nome"
-        className="w-full p-2 mt-3 rounded text-black"
-        onChange={e => setName(e.target.value)}
-      />
-
-      <input 
-        placeholder="Idade"
-        className="w-full p-2 mt-3 rounded text-black"
-        onChange={e => setAge(e.target.value)}
-      />
-
-      <button 
-        onClick={submit}
-        className="bg-yellow-500 w-full py-2 mt-4 rounded">
-        Registrar
-      </button>
-
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
-
 </body>
 </html>
